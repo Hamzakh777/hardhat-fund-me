@@ -1,6 +1,7 @@
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DEV_CHAINS, NETWORK_CONFIG } from "../helper-hardhat-config";
+import { verify } from "../utils/verify";
 
 const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   // these are added by hardhat-deploy
@@ -22,13 +23,20 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   }
 
   // when going for localhost or hardhat network we want to use a mock
+  const args = [ethUsdPriceFeedAddress];
   const fundMe = await deploy("FundMe", {
     from: deployer,
-    args: [ethUsdPriceFeedAddress], // put price feed address,
+    args, // put price feed address,
     log: true,
+    waitConfirmations: 6
   });
+
+  if (!DEV_CHAINS.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+    await verify(fundMe.address, args);
+  }
+
   log("--------------------------------------------------");
 };
 
 export default func;
-func.tags = ["all", 'FundMe'];
+func.tags = ["all", "fundme"];
