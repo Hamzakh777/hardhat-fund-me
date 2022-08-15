@@ -28,7 +28,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
     from: deployer,
     args, // put price feed address,
     log: true,
-    waitConfirmations: 6
+    waitConfirmations: DEV_CHAINS.includes(network.name) ? 1 : 6
   });
 
   if (!DEV_CHAINS.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
