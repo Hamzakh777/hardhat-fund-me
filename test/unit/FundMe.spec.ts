@@ -17,7 +17,7 @@ describe("FundMe", async function() {
 
   describe("Contructor", async function() {
     it("Should set the aggregator address correctly", async function() {
-      const address = await fundMe.s_priceFeed();
+      const address = await fundMe.getPriceFeed();
       assert.equal(address, mockV3Aggregator.address);
     });
   });
@@ -35,7 +35,7 @@ describe("FundMe", async function() {
         value: SEND_VALUE,
         from: deployer,
       });
-      const amount = await fundMe.s_addressToAmountFunded(deployer);
+      const amount = await fundMe.getAddressToAmountFunded(deployer);
       assert.equal(amount.toString(), SEND_VALUE.toString());
     });
 
@@ -44,7 +44,7 @@ describe("FundMe", async function() {
         value: SEND_VALUE,
         from: deployer,
       });
-      const funder = await fundMe.s_funders(0);
+      const funder = await fundMe.getFunder(0);
       assert.equal(funder, deployer);
     });
   });
@@ -108,9 +108,9 @@ describe("FundMe", async function() {
       );
 
       // make sure that s_funders are reset properly
-      expect(await fundMe.s_funders).to.be.reverted;
+      expect(await fundMe.getFunders()).to.be.reverted;
       for (let i = 0; i < signers.length; i++) {
-        assert.equal(await (await fundMe.s_addressToAmountFunded(signers[i].address)).toString(), "0");
+        assert.equal(await (await fundMe.getAddressToAmountFunded(signers[i].address)).toString(), "0");
       }
     });
 
