@@ -1,9 +1,9 @@
 import { assert, expect } from "chai";
-import { deployments, ethers, getNamedAccounts, network } from "hardhat";
+import { ethers, getNamedAccounts, network } from "hardhat";
 import { DEV_CHAINS } from "../../helper-hardhat-config";
 import { FundMe, MockV3Aggregator } from "../../typechain-types";
 
-!DEV_CHAINS.includes(network.name)
+DEV_CHAINS.includes(network.name)
   ? describe.skip
   : describe("FundMe", async function() {
       let fundMe: FundMe;
@@ -13,12 +13,7 @@ import { FundMe, MockV3Aggregator } from "../../typechain-types";
       beforeEach(async () => {
         // deploy all contract
         deployer = (await getNamedAccounts()).deployer;
-        await deployments.fixture("all");
         fundMe = await ethers.getContract("FundMe", deployer);
-        mockV3Aggregator = await ethers.getContract(
-          "MockV3Aggregator",
-          deployer
-        );
       });
 
       describe("Contructor", async function() {
@@ -39,7 +34,6 @@ import { FundMe, MockV3Aggregator } from "../../typechain-types";
         it("Should update s_addressToAmountFunded when funded", async function() {
           await fundMe.fund({
             value: SEND_VALUE,
-            from: deployer,
           });
           const amount = await fundMe.getAddressToAmountFunded(deployer);
           assert.equal(amount.toString(), SEND_VALUE.toString());
